@@ -11,6 +11,7 @@ namespace RosetteStore.WebUI.Controllers
     public class RosetteController : Controller
     {
         private IRosetteRepository repository;
+        public int pageSize = 4;
 
         public RosetteController(IRosetteRepository repository)
         {
@@ -20,15 +21,12 @@ namespace RosetteStore.WebUI.Controllers
         EFDbContext db = new EFDbContext();
 
         // GET: Rosette
-        public ViewResult List()
+        public ViewResult List(int page = 1)
         {
-            //return View(repository.Rosettes);
-            return View(db.Rosettes);
+            return View(repository.Rosettes
+                .OrderBy(rozette => rozette.RosetteId)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize));
         }
-        //protected override void Dispose(bool disposing)
-        //{
-        //    db.Dispose();
-        //    base.Dispose(disposing);
-        //}
     }
 }
