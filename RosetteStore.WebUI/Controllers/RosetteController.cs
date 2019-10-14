@@ -1,5 +1,6 @@
 ﻿using RosetteStore.Domain.Abstract;
 using RosetteStore.Domain.Concrete;
+using RosetteStore.WebUI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,10 +24,20 @@ namespace RosetteStore.WebUI.Controllers
         // GET: Rosette
         public ViewResult List(int page = 1)
         {
-            return View(repository.Rosettes
-                .OrderBy(rozette => rozette.RosetteId)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize));
-        }
+            RosettesListViewModel model = new RosettesListViewModel
+            {
+                Rosettes = repository.Rosettes
+                    .OrderBy(rozette => rozette.RosetteId)
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize),
+                PagingInfo = new PagingInfo
+                {
+                    CurrentPage = page,
+                    ItemsPerPage = pageSize,
+                    TotalItems = repository.Rosettes.Count()
+                }
+            };
+            return View(model);
     }
+}
 }

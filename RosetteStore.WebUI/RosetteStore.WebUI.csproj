@@ -146,6 +146,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="HtmlHelpers\PagingHelper.cs" />
+    <Compile Include="Models\PagingInfo.cs" />
+    <Compile Include="Models\RosettesListViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\NinjectRegistrations.cs" />
   </ItemGroup>
@@ -172,9 +175,7 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\RosetteStore.Domain\RosetteStore.Domain.csproj">
       <Project>{2ff7d6ff-37c8-41db-b11e-523932f4a7e0}</Project>
