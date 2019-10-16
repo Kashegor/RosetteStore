@@ -35,7 +35,9 @@ namespace RosetteStore.WebUI.Controllers
                 {
                     CurrentPage = page,
                     ItemsPerPage = pageSize,
-                    TotalItems = repository.Rosettes.Count()
+                    TotalItems = category == null ? 
+                    repository.Rosettes.Count() :
+                    repository.Rosettes.Where(rosette => rosette.Category == category).Count()
                 },
                 CurrentCategory = category
             };
