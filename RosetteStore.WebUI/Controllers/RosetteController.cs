@@ -22,11 +22,12 @@ namespace RosetteStore.WebUI.Controllers
         EFDbContext db = new EFDbContext();
 
         // GET: Rosette
-        public ViewResult List(int page = 1)
+        public ViewResult List(string category, int page = 1)
         {
             RosettesListViewModel model = new RosettesListViewModel
             {
                 Rosettes = repository.Rosettes
+                    .Where(p => category == null || p.Category == category)
                     .OrderBy(rozette => rozette.RosetteId)
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize),
@@ -34,8 +35,11 @@ namespace RosetteStore.WebUI.Controllers
                 {
                     CurrentPage = page,
                     ItemsPerPage = pageSize,
-                    TotalItems = repository.Rosettes.Count()
-                }
+                    TotalItems = category == null ? 
+                    repository.Rosettes.Count() :
+                    repository.Rosettes.Where(rosette => rosette.Category == category).Count()
+                },
+                CurrentCategory = category
             };
             return View(model);
     }

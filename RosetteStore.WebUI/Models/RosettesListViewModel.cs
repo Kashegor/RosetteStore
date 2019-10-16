@@ -10,5 +10,6 @@ namespace RosetteStore.WebUI.Models
     {
         public IEnumerable<Rosette> Rosettes { get; set; }
         public PagingInfo PagingInfo { get; set; }
+        public string CurrentCategory { get; set; }
     }
 }
