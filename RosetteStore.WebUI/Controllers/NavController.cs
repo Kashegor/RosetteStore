@@ -16,8 +16,9 @@ namespace RosetteStore.WebUI.Controllers
             this.repository = repository;
         }
 
-        public PartialViewResult Menu()
+        public PartialViewResult Menu(string category = null)
         {
+            ViewBag.SelectedCategory = category;
             IEnumerable<string> categories = repository.Rosettes
                 .Select(rosette => rosette.Category)
                 .Distinct()
