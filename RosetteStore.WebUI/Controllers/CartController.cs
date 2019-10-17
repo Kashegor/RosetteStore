@@ -16,47 +16,36 @@ namespace RosetteStore.WebUI.Controllers
         {
             repository = repo;
         }
-        public ViewResult Index(string returnUrl)
+        public ViewResult Index(Cart cart, string returnUrl)
         {
             return View(new CartIndexViewModel
             {
-                Cart = GetCart(),
+                Cart = cart,
                 ReturnUrl = returnUrl
             });
         }
-        public RedirectToRouteResult AddToCart(int rosetteId, string returnUrl)
+        public RedirectToRouteResult AddToCart(Cart cart, int rosetteId, string returnUrl)
         {
             Rosette rosette = repository.Rosettes
                 .FirstOrDefault(g => g.RosetteId == rosetteId);
 
             if (rosette != null)
             {
-                GetCart().AddItem(rosette, 1);
+                cart.AddItem(rosette, 1);
             }
             return RedirectToAction("Index", new { returnUrl });
         }
 
-        public RedirectToRouteResult RemoveFromCart(int rosetteId, string returnUrl)
+        public RedirectToRouteResult RemoveFromCart(Cart cart, int rosetteId, string returnUrl)
         {
             Rosette rosette = repository.Rosettes
                 .FirstOrDefault(g => g.RosetteId == rosetteId);
 
             if (rosette != null)
             {
-                GetCart().RemoveLine(rosette);
+                cart.RemoveLine(rosette);
             }
             return RedirectToAction("Index", new { returnUrl });
-        }
-
-        public Cart GetCart()
-        {
-            Cart cart = (Cart)Session["Cart"];
-            if (cart == null)
-            {
-                cart = new Cart();
-                Session["Cart"] = cart;
-            }
-            return cart;
         }
     }
 }
