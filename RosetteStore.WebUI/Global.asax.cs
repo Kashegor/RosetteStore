@@ -1,4 +1,6 @@
 using RosetteStore.Domain.Concrete;
+using RosetteStore.Domain.Entities;
+using RosetteStore.WebUI.Infrastructure.Binders;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -15,6 +17,7 @@ namespace RosetteStore.WebUI
         {
             AreaRegistration.RegisterAllAreas();
             RouteConfig.RegisterRoutes(RouteTable.Routes);
+            ModelBinders.Binders.Add(typeof(Cart), new CartModelBinder());
         }
     }
 }

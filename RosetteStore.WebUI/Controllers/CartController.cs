@@ -12,51 +12,70 @@ namespace RosetteStore.WebUI.Controllers
     public class CartController : Controller
     {
         private IRosetteRepository repository;
-        public CartController(IRosetteRepository repo)
+        private IOrderProcessor orderProcessor;
+        public CartController(IRosetteRepository repo, IOrderProcessor processor)
         {
             repository = repo;
+            orderProcessor = processor;
         }
-        public ViewResult Index(string returnUrl)
+        public ViewResult Index(Cart cart, string returnUrl)
         {
             return View(new CartIndexViewModel
             {
-                Cart = GetCart(),
+                Cart = cart,
                 ReturnUrl = returnUrl
             });
         }
-        public RedirectToRouteResult AddToCart(int rosetteId, string returnUrl)
+        public RedirectToRouteResult AddToCart(Cart cart, int rosetteId, string returnUrl)
         {
             Rosette rosette = repository.Rosettes
                 .FirstOrDefault(g => g.RosetteId == rosetteId);
 
             if (rosette != null)
             {
-                GetCart().AddItem(rosette, 1);
+                cart.AddItem(rosette, 1);
             }
             return RedirectToAction("Index", new { returnUrl });
         }
 
-        public RedirectToRouteResult RemoveFromCart(int rosetteId, string returnUrl)
+        public RedirectToRouteResult RemoveFromCart(Cart cart, int rosetteId, string returnUrl)
         {
             Rosette rosette = repository.Rosettes
                 .FirstOrDefault(g => g.RosetteId == rosetteId);
 
             if (rosette != null)
             {
-                GetCart().RemoveLine(rosette);
+                cart.RemoveLine(rosette);
             }
             return RedirectToAction("Index", new { returnUrl });
         }
-
-        public Cart GetCart()
+        public PartialViewResult Summary(Cart cart)
         {
-            Cart cart = (Cart)Session["Cart"];
-            if (cart == null)
+            return PartialView(cart);
+        }
+        public ViewResult Checkout()
+        {
+            return View(new ShippingDetails());
+        }
+
+        [HttpPost]
+        public ViewResult Checkout(Cart cart, ShippingDetails shippingDetails)
+        {
+            if (cart.Lines.Count() == 0)
             {
-                cart = new Cart();
-                Session["Cart"] = cart;
+                ModelState.AddModelError("", "Извините, ваша корзина пуста!");
             }
-            return cart;
+
+            if (ModelState.IsValid)
+            {
+                orderProcessor.ProcessOrder(cart, shippingDetails);
+                cart.Clear();
+                return View("Completed");
+            }
+            else
+            {
+                return View(shippingDetails);
+            }
         }
     }
 }
