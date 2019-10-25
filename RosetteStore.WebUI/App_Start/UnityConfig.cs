@@ -1,8 +1,9 @@
 using RosetteStore.Domain.Abstract;
 using RosetteStore.Domain.Concrete;
 using System;
-
+using System.Configuration;
 using Unity;
+using Unity.Injection;
 
 namespace RosetteStore.WebUI
 {
@@ -45,6 +46,13 @@ namespace RosetteStore.WebUI
             // TODO: Register your type's mappings here.
             // container.RegisterType<IProductRepository, ProductRepository>();
             container.RegisterType<IRosetteRepository, EFRosetteRepository>();
+
+            EmailSettings emailSettings = new EmailSettings
+            {
+                WriteAsFile = bool.Parse(ConfigurationManager
+                    .AppSettings["Email.WriteAsFile"] ?? "false")
+            };
+            container.RegisterType<IOrderProcessor, EmailOrderProcessor>(new InjectionConstructor(emailSettings));
         }
     }
 }
